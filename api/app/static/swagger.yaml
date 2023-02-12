@@ -1,0 +1,459 @@
+openapi: 3.0.3
+info:
+  title: TestnetAPI
+  description: |-
+  version: 0.1.0
+servers:
+  - url: /api/v1
+paths:
+  /register:
+    post:
+      description: Register new user into database
+      tags:
+        - Authorization
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                email:
+                  type: string
+                  example: "awesomecat@meow.com"
+                password:
+                  type: string
+      responses:
+        '200':
+          description: gets jwt token
+          content:
+            application/json:
+              schema:
+                properties:
+                  access_token:
+                    type: string
+                    example: 'abcs#smnds232m###21mn'
+        '400':
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /login:
+    post:
+      description: Signin in
+      tags:
+        - Authorization
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                email:
+                  type: string
+                  example: "awesomecat@meow.com"
+                password:
+                  type: string
+      responses:
+        '200':
+          description: gets jwt token
+          content:
+            application/json:
+              schema:
+                properties:
+                  access_token:
+                    type: string
+                    example: 'abcs#smnds232m###21mn'
+        '400':
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /users/{id}:
+    get:
+      tags:
+        - User
+      description: Gets a user by id
+      parameters:
+        - name: id
+          in: path
+          description: users id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: not found
+        '401':
+          description: unauthorized
+  /edit_profile:
+    put:
+      tags:
+        - User
+      description: Change an Email
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                email:
+                  type: string
+                  example: 'awesomecat@meow.com'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: not found
+  /edit_password:
+    put:
+      tags:
+        - User
+      description: Change a password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                current_password:
+                  type: string
+                  example: 'qwertasdf'
+                password:
+                  type: string
+                  example: 'zaqwsxcde'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: not found
+  /accounts:
+    get:
+      tags:
+        - Accounts
+      description: Gets list of accounts
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Accounts'
+        '404':
+          description: not found
+    post:
+      tags:
+        - Accounts
+      description: Create a new Account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                account:
+                  type: string
+                  example: '@meow'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Accounts'
+        '400':
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: not found
+    delete:
+      tags:
+        - Accounts
+      description: Delete an account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                id:
+                  type: integer
+                  example: 5
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusOk'
+        '400':
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: not found
+  /keys:
+    get:
+      tags:
+        - Keys
+      description: Gets list of keys
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Keys'
+        '404':
+          description: not found
+    post:
+      tags:
+        - Keys
+      description: Create a new Account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                key:
+                  type: string
+                  example: 'cat'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Keys'
+        '400':
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: not found
+    delete:
+      tags:
+        - Keys
+      description: Delete a key
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                id:
+                  type: integer
+                  example: 5
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusOk'
+        '400':
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: not found
+  /parsing:
+    get:
+      tags:
+        - Parsing
+      description: Launch parsing
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Parsing'
+        '400':
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: not found
+  /last_results:
+    get:
+      tags:
+        - Parsing
+      description: Gets last parsing result
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LastResults'
+        '400':
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: not found
+    delete:
+      tags:
+        - Parsing
+      description: Delete last parsing result
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusOk'
+        '400':
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: not found
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Accounts:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 10
+        user_id:
+          type: integer
+          example: 1
+        account:
+          type: string
+          example: '@meow'
+    Keys:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 10
+        user_id:
+          type: integer
+          example: 1
+        key:
+          type: string
+          example: 'cats'
+    User:
+      type: object
+      properties:
+        user:
+          type: string
+          example: 'awesomecat@meow.com'
+        id:
+          type: integer
+          example: 1
+    Parsing:
+      type: object
+      properties:
+        url:
+          type: string
+          example: 'http://blablalink.com/123456'
+        content:
+          type: string
+          example: 'I like beer!'
+        date:
+          type: string
+        username:
+          type: string
+          example: 'Batman'
+        display_name:
+          type: string
+        profile_image_url:
+          type: string
+    LastResults:
+      type: object
+      properties:
+        url:
+          type: string
+          example: 'http://blablalink.com/123456'
+        content:
+          type: string
+          example: 'I like beer!'
+        date:
+          type: string
+        username:
+          type: string
+          example: 'Batman'
+        display_name:
+          type: string
+        profile_image_url:
+          type: string
+        created:
+          type: string
+        user_id:
+          type: integer
+          example: 12
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+            type: string
+    StatusOk:
+      type: object
+      properties:
+        status:
+          type: string
+          example: 'OK'
+
+
+security:
+  - bearerAuth: []

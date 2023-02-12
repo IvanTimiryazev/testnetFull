@@ -1,0 +1,11 @@
+.startButton {
+  height: 7rem;
+  display: flex;
+  align-items: center;
+}
+
+.startButton button {
+  margin: 0;
+  width: 99%;
+  font-size: 1.6rem;
+}

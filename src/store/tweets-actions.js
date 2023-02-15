@@ -11,11 +11,11 @@ export const fetchTweetsData = () => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
           "Content-Type": "application/json",
         },
+        timeout: 100,
       });
       dispatch(tweetsActions.hideLoading());
 
       const data = await response.json();
-      console.log(data);
 
       if (!response.ok) {
         throw new Error("Parcing failed... Please try again.");
@@ -27,13 +27,16 @@ export const fetchTweetsData = () => {
 
     try {
       const tweets = await sendRequest();
+      if (tweets.length === 0) {
+        dispatch(callNotification("error", "No tweets found by your order."));
+      }
       dispatch(
         tweetsActions.replaceTweets({
           items: tweets || [],
         })
       );
     } catch (err) {
-      // dispatch(callNotification("error", err.message));
+      dispatch(callNotification("error", err.message));
       console.log(err.message);
     }
   };

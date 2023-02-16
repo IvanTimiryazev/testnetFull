@@ -42,7 +42,7 @@ def scrap(sources: list, regs):
                                'username': tweet.user.username, 'display_name': tweet.user.displayname,
                                'profile_image_url': tweet.user.profileImageUrl})
         print("--- %s seconds ---" % (time.time() - start))
-        print(len(tweets))
+        print(f'{len(tweets)} -- downloaded')
         _set_task_progress(100)
         return parser(tweets, regs)
     except:
@@ -62,5 +62,5 @@ def parser(tweets, regs):
         parse_result = re.match(regex, raw_text)
         if parse_result:
             matched.append(i)
-    print(matched)
+    print(f'{len(matched)} -- matched')
     return matched

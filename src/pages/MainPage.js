@@ -41,7 +41,7 @@ const MainPage = () => {
         status={notification.status}
         message={notification.message}
       />
-      {showSpinner ? <SmallSpinner /> : ""}
+      {showSpinner && <SmallSpinner />}
       <MainHeader />
       <main>
         <FollowingsSection />

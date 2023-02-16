@@ -8,10 +8,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { authActions } from "../../store/auth";
 import MainButton from "../Reusable/MainButton";
 import PasswordInput from "../Reusable/PasswordInput";
+import SmallSpinner from "../Reusable/SmallSpinner";
+import { loginFunction } from "../../store/auth-actions";
 
 const LoginForm = () => {
-  const history = useHistory();
+  const showSpinner = useSelector((state) => state.spinner.show);
   const dispatch = useDispatch();
+  const history = useHistory();
   const rememberMe = useSelector((state) => state.auth.rememberMe);
   const isError = useSelector((state) => state.auth.error);
   const [checkBox, setCheckBox] = useState(true);
@@ -52,39 +55,9 @@ const LoginForm = () => {
   const submitHandler = (event) => {
     event.preventDefault();
 
-    const sendRequest = async () => {
-      const response = await fetch("/api/v1/login", {
-        method: "POST",
-        body: JSON.stringify({
-          email: enteredEmail,
-          password: enteredPassword,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Email or password was wrong");
-      }
-
-      const data = await response.json();
-      dispatch(authActions.logIn(data.access_token));
-
-      if (!rememberMe) {
-        setTimeout(logoutHandler, 7200000);
-      } else if (rememberMe) {
-        setTimeout(logoutHandler, 604800000);
-      }
-    };
-
-    // sendRequest().catch((err) => dispatch(authActions.showError(err.message)));
-
-    try {
-      sendRequest();
-    } catch (err) {
-      dispatch(authActions.showError(err.message));
-    }
+    dispatch(
+      loginFunction(enteredEmail, enteredPassword, rememberMe, logoutHandler)
+    );
 
     document.activeElement.blur();
     resetEmailInput();
@@ -109,48 +82,53 @@ const LoginForm = () => {
     emailInputHasError || isError ? `formInput wrongCredentials` : `formInput`;
 
   return (
-    <div className={classes.container}>
-      <form onSubmit={submitHandler} className={classes.loginForm}>
-        <h1>Sign In</h1>
-        <div className={classes.newUser}>
-          <p>New user?</p>
-          <span onClick={signInHandler}>Sign up.</span>
-        </div>
-        <div className="inputsContainer">
-          <input
-            type="email"
-            placeholder="Email"
-            className={emailInputClasses}
-            value={enteredEmail}
-            onChange={emailChangedHandler}
-            onBlur={emailBlurHandler}
-            onFocus={emailFocusHandler}
-          />
-          <PasswordInput
-            inputType="password"
-            enteredPassword={enteredPassword}
-            passwordInputHasError={passwordInputHasError}
-            enteredPasswordIsValid={enteredPasswordIsValid}
-            passwordChangedHandler={passwordChangedHandler}
-            passwordBlurHandler={passwordBlurHandler}
-            resetPasswordInput={resetPasswordInput}
-            placeholder="Password"
-          />
-        </div>
-        {isError && <p className={classes.errorText}>{isError.errorMessage}</p>}
-        {!isError && (
-          <div className={classes.stayLoggedIn}>
-            <div onClick={checkBoxHandler} className={checkBoxClasses}></div>
-            <span>Remember me</span>
+    <>
+      {showSpinner && <SmallSpinner />}
+      <div className={classes.container}>
+        <form onSubmit={submitHandler} className={classes.loginForm}>
+          <h1>Sign In</h1>
+          <div className={classes.newUser}>
+            <p>New user?</p>
+            <span onClick={signInHandler}>Sign up.</span>
           </div>
-        )}
-        <MainButton title="Sign In" type="submit" disabled={!formIsValid} />
-        {/* <span onClick={forgotPasswordHandle} className={classes.forgotPassword}>
+          <div className="inputsContainer">
+            <input
+              type="email"
+              placeholder="Email"
+              className={emailInputClasses}
+              value={enteredEmail}
+              onChange={emailChangedHandler}
+              onBlur={emailBlurHandler}
+              onFocus={emailFocusHandler}
+            />
+            <PasswordInput
+              inputType="password"
+              enteredPassword={enteredPassword}
+              passwordInputHasError={passwordInputHasError}
+              enteredPasswordIsValid={enteredPasswordIsValid}
+              passwordChangedHandler={passwordChangedHandler}
+              passwordBlurHandler={passwordBlurHandler}
+              resetPasswordInput={resetPasswordInput}
+              placeholder="Password"
+            />
+          </div>
+          {isError && (
+            <p className={classes.errorText}>{isError.errorMessage}</p>
+          )}
+          {!isError && (
+            <div className={classes.stayLoggedIn}>
+              <div onClick={checkBoxHandler} className={checkBoxClasses}></div>
+              <span>Remember me</span>
+            </div>
+          )}
+          <MainButton title="Sign In" type="submit" disabled={!formIsValid} />
+          {/* <span onClick={forgotPasswordHandle} className={classes.forgotPassword}>
           Forgot password?
         </span> */}
-      </form>
-      <img src={logoMain} alt="keysee" className={classes.mainLogo} />
-    </div>
+        </form>
+        <img src={logoMain} alt="keysee" className={classes.mainLogo} />
+      </div>
+    </>
   );
 };
 

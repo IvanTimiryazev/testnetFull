@@ -21,7 +21,6 @@ export const fetchTweetsData = () => {
         throw new Error("Parcing failed... Please try again.");
       }
 
-      // console.log(data);
       return data;
     };
 
@@ -60,10 +59,6 @@ export const fetchLastResult = () => {
       }
 
       const data = await response.json();
-      dispatch(
-        callNotification("loaded", "Previous successful result loaded.")
-      );
-
       return data;
     };
 
@@ -74,6 +69,11 @@ export const fetchLastResult = () => {
           items: tweets || [],
         })
       );
+      if (tweets.length > 0) {
+        dispatch(
+          callNotification("loaded", "Previous successful result loaded.")
+        );
+      }
     } catch (err) {
       dispatch(callNotification("error", err.message));
     }
